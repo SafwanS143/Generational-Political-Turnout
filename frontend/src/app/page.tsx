@@ -14,7 +14,10 @@ export default function Home() {
         </p>
       </header>
       <main className="flex flex-col gap-6 w-full max-w-md">
-        <button className="w-full py-4 px-6 rounded-lg bg-blue-600 text-white text-xl font-semibold shadow hover:bg-blue-700 transition">
+        <button
+          className="w-full py-4 px-6 rounded-lg bg-blue-600 text-white text-xl font-semibold shadow hover:bg-blue-700 transition"
+          onClick={() => router.push('/turnout-dashboard')}
+        >
           Generational Voting Trends
         </button>
         <button
