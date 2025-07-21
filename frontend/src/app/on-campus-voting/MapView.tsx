@@ -117,18 +117,31 @@ export default function MapView() {
   const activeCount = institutions.filter(i => (i.votes || 0) > activeThreshold).length;
   const insight3 = `Only ${activeCount} out of ${institutions.length} campuses had more than ${activeThreshold} votes.`;
 
+  // --- Reusable StatCard Component (matches ImmigrationTurnoutPage) ---
+  function StatCard({ title, value, color }: { title: string, value: string, color: string }) {
+    return (
+      <div className={`bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center border-t-4`} style={{ borderTopColor: color }}>
+        <div className="text-lg text-gray-500 mb-1">{title}</div>
+        <div className="text-2xl font-bold" style={{ color }}>{value}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white dark:bg-black flex flex-col">
       {/* Header */}
       <header className="w-full px-4 py-6 border-b border-gray-200 bg-white dark:bg-black">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1 text-center">
-          2019 On-Campus Federal Election Voting
+          On-Campus Federal Election Voting
         </h1>
         <section className="w-full max-w-3xl mx-auto mb-6 p-6 bg-gray-100 dark:bg-gray-800 rounded-xl shadow flex flex-col gap-3">
           <h2 className="text-2xl font-semibold text-blue-700 dark:text-blue-300 mb-1">Why On-Campus Voting Data Matters</h2>
           <p className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed">
             On-campus voting initiatives are crucial for increasing youth engagement and making elections more accessible to students. Analyzing campus voting patterns helps identify where participation is strong, where it can be improved, and how resources can be better allocated to support student voters.
           </p>
+          <div className="text-base font-semibold text-gray-800 dark:text-gray-100 bg-blue-50 dark:bg-blue-900 rounded px-4 py-2 mb-2 mt-1 text-center">
+            Data covers the 2019 federal election.
+          </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-2">What You'll Find on This Page</h3>
           <ul className="list-disc pl-6 text-gray-700 dark:text-gray-200 text-base space-y-1">
             <li>An interactive map of post-secondary institutions that hosted voting stations in 2019.</li>
@@ -201,30 +214,12 @@ export default function MapView() {
         </section>
       </main>
       {/* Summary Statistics */}
-      <section className="w-full max-w-5xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{totalVotes.toLocaleString()}</div>
-          <div className="text-gray-600 dark:text-gray-300 mt-2">Total Votes</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{avgVotes.toLocaleString()}</div>
-          <div className="text-gray-600 dark:text-gray-300 mt-2">Average Votes per Campus</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-2xl font-bold text-green-700 dark:text-green-300">{maxCampus?.name || "-"}</div>
-          <div className="text-gray-600 dark:text-gray-300 mt-2">Highest Votes</div>
-          <div className="text-lg font-semibold text-green-700 dark:text-green-300">{maxCampus?.votes?.toLocaleString() || "-"}</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-2xl font-bold text-red-700 dark:text-red-300">{minCampus?.name || "-"}</div>
-          <div className="text-gray-600 dark:text-gray-300 mt-2">Lowest Votes</div>
-          <div className="text-lg font-semibold text-red-700 dark:text-red-300">{minCampus?.votes?.toLocaleString() || "-"}</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center col-span-1 md:col-span-2 lg:col-span-1">
-          <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">{maxProvince ? maxProvince[0] : "-"}</div>
-          <div className="text-gray-600 dark:text-gray-300 mt-2">Province with Highest Total Votes</div>
-          <div className="text-lg font-semibold text-purple-700 dark:text-purple-300">{maxProvince ? maxProvince[1].toLocaleString() : "-"}</div>
-        </div>
+      <section className="w-full max-w-6xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        <StatCard title="Total Votes" value={totalVotes.toLocaleString()} color="#2563eb" />
+        <StatCard title="Average Votes per Campus" value={avgVotes.toLocaleString()} color="#2563eb" />
+        <StatCard title="Highest Votes" value={maxCampus ? `${maxCampus.name} (${maxCampus.votes?.toLocaleString()})` : "-"} color="#16a34a" />
+        <StatCard title="Lowest Votes" value={minCampus ? `${minCampus.name} (${minCampus.votes?.toLocaleString()})` : "-"} color="#dc2626" />
+        <StatCard title="Province with Highest Total Votes" value={maxProvince ? `${maxProvince[0]} (${maxProvince[1].toLocaleString()})` : "-"} color="#a21caf" />
       </section>
       {/* Data Insights */}
       <section className="w-full max-w-5xl mx-auto mt-4 mb-8 p-4">
@@ -302,6 +297,10 @@ export default function MapView() {
           </div>
         </div>
       </section>
+      {/* Source Note */}
+      <div className="w-full max-w-5xl mx-auto mb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
+        Source: Campus Voting Turnout - 42nd and 43rd General Elections, elections.ca
+      </div>
     </div>
   );
 } 

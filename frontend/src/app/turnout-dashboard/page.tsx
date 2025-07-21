@@ -153,30 +153,29 @@ export default function TurnoutDashboard() {
     return null;
   };
 
-  // --- Summary Cards ---
-  // Helper: valid age groups
+  // --- Summary Cards and Insights (use full dataset, not filtered) ---
   const VALID_AGE_GROUP = (age: string) => (
     age !== "All ages" && age !== "First time" && age !== "Not first time"
   );
 
   // Highest turnout: all genders only, valid age groups only
-  const highest = filtered
+  const highest = data
     .filter(d => d.gender === "All genders" && VALID_AGE_GROUP(d.age_group))
     .reduce((max, d) => (d.turnout_rate > (max?.turnout_rate ?? -1) ? d : max), null as AgeGenderTurnout | null);
 
   // Lowest turnout: valid age groups only
-  const lowest = filtered
+  const lowest = data
     .filter(d => VALID_AGE_GROUP(d.age_group))
     .reduce((min, d) => (d.turnout_rate < (min?.turnout_rate ?? 2) ? d : min), null as AgeGenderTurnout | null);
 
   // Overall average: valid age groups only
-  const validForAvg = filtered.filter(d => VALID_AGE_GROUP(d.age_group));
+  const validForAvg = data.filter(d => VALID_AGE_GROUP(d.age_group));
   const overallAvg = validForAvg.length ? +(validForAvg.reduce((sum, d) => sum + d.turnout_rate, 0) / validForAvg.length * 100).toFixed(1) : 0;
-  const totalVotes = filtered.reduce((sum, d) => sum + (d.votes || 0), 0);
-  const totalEligible = filtered.reduce((sum, d) => sum + (d.eligible_electors || 0), 0);
+  const totalVotes = data.reduce((sum, d) => sum + (d.votes || 0), 0);
+  const totalEligible = data.reduce((sum, d) => sum + (d.eligible_electors || 0), 0);
   // Youngest/oldest group gap
-  const youngest = filtered.filter((d) => d.age_group === "18 to 24 years");
-  const oldest = filtered.filter((d) => d.age_group === "65 to 74 years");
+  const youngest = data.filter((d) => d.age_group === "18 to 24 years");
+  const oldest = data.filter((d) => d.age_group === "65 to 74 years");
   const youngestAvg = youngest.length ? youngest.reduce((sum, d) => sum + d.turnout_rate, 0) / youngest.length : 0;
   const oldestAvg = oldest.length ? oldest.reduce((sum, d) => sum + d.turnout_rate, 0) / oldest.length : 0;
   const gap = +(oldestAvg - youngestAvg) * 100;
@@ -189,7 +188,7 @@ export default function TurnoutDashboard() {
   // --- Insights ---
   // Replace redundant highest turnout insight with largest turnout gap insight
   // Find the two age group/province pairs with the largest turnout rate difference (all genders only, valid age groups)
-  const allGendersValid = filtered.filter(d => d.gender === "All genders" && VALID_AGE_GROUP(d.age_group));
+  const allGendersValid = data.filter(d => d.gender === "All genders" && VALID_AGE_GROUP(d.age_group));
   let maxGap = 0;
   let gapInfo = null;
   for (let i = 0; i < allGendersValid.length; i++) {
@@ -269,6 +268,16 @@ export default function TurnoutDashboard() {
     }
     return null;
   };
+
+  // --- Reusable StatCard Component (matches ImmigrationTurnoutPage) ---
+  function StatCard({ title, value, color }: { title: string, value: string, color: string }) {
+    return (
+      <div className={`bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center border-t-4`} style={{ borderTopColor: color }}>
+        <div className="text-lg text-gray-500 mb-1">{title}</div>
+        <div className="text-2xl font-bold" style={{ color }}>{value}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex flex-col p-4 md:p-8">
@@ -425,32 +434,12 @@ export default function TurnoutDashboard() {
       </section>
       {/* Summary Cards Section */}
       <section className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-4 md:gap-6 gap-y-6 mb-10">
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-lg text-gray-500 mb-1">Highest Turnout</div>
-          <div className="text-2xl font-bold text-green-700 dark:text-green-300">{highest ? `${highest.age_group}, ${CARD_PROVINCE_SHORT[highest.province] || highest.province}` : "-"}</div>
-          <div className="text-lg font-semibold text-green-700 dark:text-green-300">{highest ? (highest.turnout_rate * 100).toFixed(1) + "%" : "-"}</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-lg text-gray-500 mb-1">Lowest Turnout</div>
-          <div className="text-2xl font-bold text-red-700 dark:text-red-300">{lowest ? `${lowest.age_group}, ${lowest.province}` : "-"}</div>
-          <div className="text-lg font-semibold text-red-700 dark:text-red-300">{lowest ? (lowest.turnout_rate * 100).toFixed(1) + "%" : "-"}</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-lg text-gray-500 mb-1">Overall Avg. Turnout</div>
-          <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{overallAvg.toFixed(1)}%</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-lg text-gray-500 mb-1">Total Votes Cast</div>
-          <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">{totalVotes.toLocaleString()}</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-lg text-gray-500 mb-1">Total Eligible Electors</div>
-          <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">{totalEligible.toLocaleString()}</div>
-        </div>
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6 flex flex-col items-center">
-          <div className="text-lg text-gray-500 mb-1">Turnout Gap (Youngest vs Oldest)</div>
-          <div className="text-2xl font-bold text-pink-700 dark:text-pink-300">{gap.toFixed(1)}%</div>
-        </div>
+        <StatCard title="Highest Turnout" value={highest ? `${highest.age_group}, ${CARD_PROVINCE_SHORT[highest.province] || highest.province}` : "-"} color="#16a34a" />
+        <StatCard title="Lowest Turnout" value={lowest ? `${lowest.age_group}, ${lowest.province}` : "-"} color="#dc2626" />
+        <StatCard title="Overall Avg. Turnout" value={overallAvg.toFixed(1) + "%"} color="#2563eb" />
+        <StatCard title="Total Votes Cast" value={totalVotes.toLocaleString()} color="#a21caf" />
+        <StatCard title="Total Eligible Electors" value={totalEligible.toLocaleString()} color="#eab308" />
+        <StatCard title="Turnout Gap (Youngest vs Oldest)" value={gap.toFixed(1) + "%"} color="#ec4899" />
       </section>
       {/* Data Insights Section */}
       <section className="w-full max-w-4xl mx-auto mb-12 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg shadow">
@@ -459,6 +448,10 @@ export default function TurnoutDashboard() {
           {insights.map((ins, i) => ins && <li key={i}>{ins}</li>)}
         </ul>
       </section>
+      {/* Source Note */}
+      <div className="w-full max-w-4xl mx-auto mb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
+        Source: Turnout by Age, Gender and Province, GE38–GE44, open.canada.ca
+      </div>
     </div>
   );
 } 

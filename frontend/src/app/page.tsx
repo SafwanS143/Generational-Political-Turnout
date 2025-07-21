@@ -26,8 +26,10 @@ export default function Home() {
         >
           On Campus Voting
         </button>
-        <button className="w-full py-4 px-6 rounded-lg bg-purple-600 text-white text-xl font-semibold shadow hover:bg-purple-700 transition">
-          Youth Voting Provincial Map
+        <button className="w-full py-4 px-6 rounded-lg bg-purple-600 text-white text-xl font-semibold shadow hover:bg-purple-700 transition"
+          onClick={() => router.push('/ImmigrationTurnoutPage')}
+        >
+          Immigration and Voting Patterns
         </button>
       </main>
       <footer className="mt-12 text-gray-400 text-sm">&copy; {new Date().getFullYear()} Elections Canada Campus Voting</footer>
