@@ -4,6 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line, Legend
 } from "recharts";
 import React from "react";
+import Link from "next/link";
 
 interface AgeGenderTurnout {
   id: number;
@@ -171,8 +172,12 @@ export default function TurnoutDashboard() {
   // Overall average: valid age groups only
   const validForAvg = data.filter(d => VALID_AGE_GROUP(d.age_group));
   const overallAvg = validForAvg.length ? +(validForAvg.reduce((sum, d) => sum + d.turnout_rate, 0) / validForAvg.length * 100).toFixed(1) : 0;
-  const totalVotes = data.reduce((sum, d) => sum + (d.votes || 0), 0);
-  const totalEligible = data.reduce((sum, d) => sum + (d.eligible_electors || 0), 0);
+
+  // --- NEW: 2021 only total votes and eligible electors ---
+  const data2021 = data.filter(d => d.year === 2021 && d.gender === "All genders" && d.province === "Canada" && VALID_AGE_GROUP(d.age_group));
+  const totalVotes2021 = data2021.reduce((sum, d) => sum + (d.votes || 0), 0);
+  const totalEligible2021 = data2021.reduce((sum, d) => sum + (d.eligible_electors || 0), 0);
+
   // Youngest/oldest group gap
   const youngest = data.filter((d) => d.age_group === "18 to 24 years");
   const oldest = data.filter((d) => d.age_group === "65 to 74 years");
@@ -281,6 +286,12 @@ export default function TurnoutDashboard() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex flex-col p-4 md:p-8">
+      <div className="mb-4">
+        <Link href="/" className="inline-flex items-center text-blue-600 dark:text-blue-300 font-semibold group">
+          <span style={{ fontSize: 20, marginRight: 6 }}>&larr;</span>
+          <span className="underline-hover group-hover:underline">Back</span>
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white text-center">Election Turnout Dashboard</h1>
       <section className="w-full max-w-4xl mx-auto mb-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-xl shadow flex flex-col gap-3">
         <h2 className="text-2xl font-semibold text-blue-700 dark:text-blue-300 mb-1">Why Does Voter Turnout Matter?</h2>
@@ -297,6 +308,7 @@ export default function TurnoutDashboard() {
           <li>Key insights and summary statistics to highlight important patterns and gaps in participation.</li>
         </ul>
       </section>
+      <hr className="my-8 border-t border-gray-200 dark:border-gray-700" />
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-8">
         <div>
@@ -437,8 +449,8 @@ export default function TurnoutDashboard() {
         <StatCard title="Highest Turnout" value={highest ? `${highest.age_group}, ${CARD_PROVINCE_SHORT[highest.province] || highest.province}` : "-"} color="#16a34a" />
         <StatCard title="Lowest Turnout" value={lowest ? `${lowest.age_group}, ${lowest.province}` : "-"} color="#dc2626" />
         <StatCard title="Overall Avg. Turnout" value={overallAvg.toFixed(1) + "%"} color="#2563eb" />
-        <StatCard title="Total Votes Cast" value={totalVotes.toLocaleString()} color="#a21caf" />
-        <StatCard title="Total Eligible Electors" value={totalEligible.toLocaleString()} color="#eab308" />
+        <StatCard title="Total Votes Cast (2021)" value={totalVotes2021.toLocaleString()} color="#a21caf" />
+        <StatCard title="Total Eligible Electors (2021)" value={totalEligible2021.toLocaleString()} color="#eab308" />
         <StatCard title="Turnout Gap (Youngest vs Oldest)" value={gap.toFixed(1) + "%"} color="#ec4899" />
       </section>
       {/* Data Insights Section */}
@@ -450,7 +462,7 @@ export default function TurnoutDashboard() {
       </section>
       {/* Source Note */}
       <div className="w-full max-w-4xl mx-auto mb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-        Source: Turnout by Age, Gender and Province, GE38–GE44, open.canada.ca
+        Source: <a href="https://open.canada.ca/data/en/dataset/b545fe25-5cf5-4488-9923-b5c2ebeeb8cc/resource/73586e35-290d-431c-94ba-5cf8a97c4ae5" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-700">Turnout by Age, Gender and Province, GE38–GE44</a>, open.canada.ca
       </div>
     </div>
   );

@@ -232,6 +232,7 @@ export default function ImmigrationTurnoutPage() {
           <li>Key insights and summary statistics highlighting important patterns.</li>
         </ul>
       </section>
+      <hr className="my-8 border-t border-gray-200 dark:border-gray-700" />
       {/* Chart 1: Grouped Bar Chart by Country of Birth & Gender */}
       <div className="w-full max-w-6xl mx-auto mb-10">
         <div className="flex flex-wrap gap-4 mb-4 items-end">
@@ -386,7 +387,7 @@ export default function ImmigrationTurnoutPage() {
       </section>
       {/* Source Note */}
       <div className="w-full max-w-4xl mx-auto mb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-        Source: Voting rates by immigrant status and country/region of birth, and Voter turnout rates by age group, province and immigrant status, Statistics Canada
+        Source: <a href="https://www150.statcan.gc.ca/n1/pub/75-001-x/2012001/tables-tableaux/11629/tbl01-eng.htm" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-700">Voting rates by immigrant status and country/region of birth</a>, and <a href="https://www150.statcan.gc.ca/n1/daily-quotidien/220216/t001d-eng.htm" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-700">Voter turnout rates by age group, province and immigrant status</a>, Statistics Canada
       </div>
     </div>
   );

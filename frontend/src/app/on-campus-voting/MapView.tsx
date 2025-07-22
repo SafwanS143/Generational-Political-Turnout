@@ -3,9 +3,9 @@ import { useEffect, useState, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L, { LeafletEvent } from "leaflet";
-import markerIcon from "/public/marker.png";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { useMap } from "react-leaflet";
+import Link from "next/link";
 
 interface Institution {
   latitude: number;
@@ -113,7 +113,7 @@ export default function MapView() {
   const top5Percent = totalVotes ? Math.round((top5Votes / totalVotes) * 100) : 0;
   const insight2 = `The top 5 campuses account for ${top5Percent}% of all on-campus votes.`;
   // Insight 3: Active campuses
-  const activeThreshold = 500;
+  const activeThreshold = 1000;
   const activeCount = institutions.filter(i => (i.votes || 0) > activeThreshold).length;
   const insight3 = `Only ${activeCount} out of ${institutions.length} campuses had more than ${activeThreshold} votes.`;
 
@@ -129,6 +129,12 @@ export default function MapView() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex flex-col">
+      <div className="mb-4 p-4">
+        <Link href="/" className="inline-flex items-center text-blue-600 dark:text-blue-300 font-semibold group">
+          <span style={{ fontSize: 20, marginRight: 6 }}>&larr;</span>
+          <span className="underline-hover group-hover:underline">Back</span>
+        </Link>
+      </div>
       {/* Header */}
       <header className="w-full px-4 py-6 border-b border-gray-200 bg-white dark:bg-black">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1 text-center">
@@ -299,7 +305,7 @@ export default function MapView() {
       </section>
       {/* Source Note */}
       <div className="w-full max-w-5xl mx-auto mb-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-        Source: Campus Voting Turnout - 42nd and 43rd General Elections, elections.ca
+        Source: <a href="https://www.elections.ca/content.aspx?section=res&dir=rep/off/camp_43&document=index&lang=e" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-700">Campus Voting Turnout - 42nd and 43rd General Elections</a>, elections.ca
       </div>
     </div>
   );
