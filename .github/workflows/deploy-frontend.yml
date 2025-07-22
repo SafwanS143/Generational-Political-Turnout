@@ -28,9 +28,6 @@ jobs:
       - name: Build Next.js App (no lint)
         run: npm run build --no-lint
 
-      - name: Export static HTML
-        run: npm run export
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
