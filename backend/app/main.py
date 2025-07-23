@@ -1,7 +1,7 @@
 ﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.routers import elections
-from backend.app.routers import age_gender_turnout
+from app.routers import elections
+from app.routers import age_gender_turnout
 
 app = FastAPI(title="Electoral Data API", version="1.0.0")
 

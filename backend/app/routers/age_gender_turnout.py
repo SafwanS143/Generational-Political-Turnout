@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from backend.app.database import SessionLocal
-from backend.app.models import AgeGenderTurnout
+from app.database import SessionLocal
+from app.models import AgeGenderTurnout
 
 router = APIRouter()
 

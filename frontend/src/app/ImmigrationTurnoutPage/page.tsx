@@ -4,6 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, LineChart, Line, Cell
 } from "recharts";
 import React from "react";
+import Link from "next/link";
 
 // --- Data Imports ---
 // Since the file exports constants, we need to copy the data here or adjust the import if using ES modules
@@ -204,6 +205,12 @@ export default function ImmigrationTurnoutPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black flex flex-col p-4 md:p-8">
+      <div className="mb-4">
+        <Link href="/" className="inline-flex items-center text-blue-600 dark:text-blue-300 font-semibold group">
+          <span style={{ fontSize: 20, marginRight: 6 }}>&larr;</span>
+          <span className="underline-hover group-hover:underline">Back</span>
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white text-center">Immigrant Status & Voter Turnout in Canada</h1>
       <section className="w-full max-w-4xl mx-auto mb-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-xl shadow flex flex-col gap-3">
         <h2 className="text-2xl font-semibold text-blue-700 dark:text-blue-300 mb-1">Why Immigration Status & Voter Turnout Matter</h2>

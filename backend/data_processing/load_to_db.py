@@ -1,6 +1,6 @@
 import pandas as pd
-from backend.app.database import SessionLocal
-from backend.app.models import Institution
+from app.database import SessionLocal
+from app.models import Institution
 
 df = pd.read_csv("data/voter_turnout_with_coords.csv")
 session = SessionLocal()
