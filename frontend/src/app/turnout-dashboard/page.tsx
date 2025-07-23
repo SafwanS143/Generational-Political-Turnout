@@ -39,7 +39,7 @@ export default function TurnoutDashboard() {
   const [hoveredTick, setHoveredTick] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/age-gender-turnout")
+    fetch("https://generational-political-turnout.onrender.com/api/age-gender-turnout")
       .then((res) => res.json())
       .then((d) => {
         setData(d);

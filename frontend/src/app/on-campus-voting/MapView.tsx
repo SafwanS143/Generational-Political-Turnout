@@ -24,7 +24,7 @@ export default function MapView() {
   const top10MarkerRefs = useRef<(L.Marker | null)[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/voter-turnout")
+    fetch("https://generational-political-turnout.onrender.com/api/voter-turnout")
       .then((res) => res.json())
       .then((data: any[]) => {
         setInstitutions(
