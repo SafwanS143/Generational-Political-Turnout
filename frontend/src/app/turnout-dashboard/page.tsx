@@ -70,7 +70,7 @@ export default function TurnoutDashboard() {
     return { age_group: age, turnout_rate: +(avg * 100).toFixed(1) };
   });
 
-  // --- Chart 2: Line chart - Turnout trend by age group across elections ---
+  // --- Chart 2: Line chart - Turnout trend by election year with age group lines ---
   // Filter out unwanted age groups for the line chart
   const ageGroupsForLine = ageGroups.filter(
     (age) =>
@@ -78,6 +78,7 @@ export default function TurnoutDashboard() {
       age !== "First time" &&
       age !== "Not first time"
   );
+  
   // Map election_e to just the year (e.g., '2004')
   const electionYearMap: { [key: string]: string } = {};
   filtered.forEach((d) => {
@@ -86,6 +87,7 @@ export default function TurnoutDashboard() {
       electionYearMap[d.election_e] = match[1];
     }
   });
+  
   const elections = Array.from(new Set(filtered.map((d) => d.election_e)))
     .sort((a, b) => {
       // Sort by year
@@ -93,24 +95,43 @@ export default function TurnoutDashboard() {
       const yearB = parseInt(electionYearMap[b] || "0");
       return yearA - yearB;
     });
+  
   const electionYears = elections.map((e) => electionYearMap[e]);
-  const lineData = ageGroupsForLine.map((age) => {
-    const obj: any = { age_group: age };
-    elections.forEach((election) => {
+  
+  // Create line data with years as x-axis and age groups as lines
+  const lineData = electionYears.map((year) => {
+    const obj: any = { year };
+    const election = elections.find(e => electionYearMap[e] === year);
+    
+    ageGroupsForLine.forEach((age) => {
       const row = filtered.find((d) => d.age_group === age && d.election_e === election);
-      obj[electionYearMap[election]] = row ? +(row.turnout_rate * 100).toFixed(1) : null;
+      // Create shorter age group labels for legend
+      let ageLabel = age;
+      if (age.includes("to")) {
+        const match = age.match(/(\d+)\s+to\s+(\d+)/);
+        if (match) {
+          ageLabel = `${match[1]}-${match[2]}`;
+        }
+      } else if (age.includes("and over")) {
+        const match = age.match(/(\d+)\s+and over/);
+        if (match) {
+          ageLabel = `${match[1]}+`;
+        }
+      }
+      obj[ageLabel] = row ? +(row.turnout_rate * 100).toFixed(1) : null;
     });
     return obj;
   });
-  // Assign colors for each year
-  const yearColors: { [year: string]: string } = {
-    "2004": "#2563eb", // blue
-    "2006": "#16a34a", // green
-    "2008": "#eab308", // yellow
-    "2011": "#f97316", // orange
-    "2015": "#a21caf", // purple
-    "2019": "#dc2626", // red
-    "2021": "#14b8a6", // teal
+
+  // Assign colors for each age group
+  const ageGroupColors: { [age: string]: string } = {
+    "18-24": "#dc2626", // red
+    "25-34": "#f97316", // orange
+    "35-44": "#eab308", // yellow
+    "45-54": "#16a34a", // green
+    "55-64": "#2563eb", // blue
+    "65-74": "#a21caf", // purple
+    "75+": "#14b8a6", // teal
   };
 
   // --- Chart 3: Clustered Bar - Age Group by Province (for 18-24) ---
@@ -362,7 +383,7 @@ export default function TurnoutDashboard() {
             Age Group
           </div>
         </div>
-        {/* Line Chart: Turnout trend by age group across elections */}
+        {/* Line Chart: Turnout trend by election year with age group lines */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
           <h2 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">Turnout Trend by Age Group (2004-2021)</h2>
           <div style={{ display: 'flex', width: '100%' }}>
@@ -386,16 +407,16 @@ export default function TurnoutDashboard() {
               <ResponsiveContainer width="100%" height={320}>
                 <LineChart data={lineData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="age_group" tick={<CustomXAxisTick />} />
+                  <XAxis dataKey="year" fontSize={14} />
                   <YAxis fontSize={14} tickFormatter={v => v + "%"} />
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
-                  {electionYears.map((year) => (
+                  {Object.keys(ageGroupColors).map((ageGroup) => (
                     <Line
-                      key={year}
+                      key={ageGroup}
                       type="monotone"
-                      dataKey={year}
-                      stroke={yearColors[year] || "#8884d8"}
+                      dataKey={ageGroup}
+                      stroke={ageGroupColors[ageGroup]}
                       dot={false}
                     />
                   ))}
@@ -404,7 +425,7 @@ export default function TurnoutDashboard() {
             </div>
           </div>
           <div style={{ width: '100%', textAlign: 'center', fontWeight: 'bold', fontSize: 18, color: '#d1d5db', marginTop: 12 }}>
-            Age Group
+            Election Year
           </div>
         </div>
         {/* Clustered Bar: 18–24 by province */}
@@ -466,4 +487,4 @@ export default function TurnoutDashboard() {
       </div>
     </div>
   );
-} 
+}
