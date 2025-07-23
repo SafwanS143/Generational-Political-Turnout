@@ -49,7 +49,7 @@ export default function MapView() {
     .slice(0, 10);
 
   const customMarker = new L.Icon({
-    iconUrl: "marker.png",
+    iconUrl: "/Generational-Political-Turnout/marker.png",
     iconSize: [40, 40],
     iconAnchor: [20, 40],
     popupAnchor: [0, -40],
