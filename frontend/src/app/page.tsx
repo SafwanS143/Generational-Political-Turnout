@@ -70,6 +70,12 @@ export default function Home() {
           )}
         </button>
       </main>
+      <footer className="mt-8 text-center">
+        <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md">
+          <span className="inline-block w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
+          After extended periods of inactivity, please allow 30-40 seconds for graphs to load
+        </p>
+      </footer>
     </div>
   );
 }
