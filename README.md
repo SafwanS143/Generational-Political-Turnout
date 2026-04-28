@@ -61,8 +61,66 @@ The platform integrates multiple datasets and provides intuitive visual tools to
 - Performed exploratory data analysis to identify turnout trends
 - Focused on generational patterns in political engagement
 
-Research shows that younger cohorts often exhibit lower turnout due to factors like political knowledge gaps and engagement differences :contentReference[oaicite:1]{index=1}, making generational analysis critical for understanding democratic participation.
+Research shows that younger cohorts often exhibit lower turnout due to factors like political knowledge gaps and engagement differences, making generational analysis critical for understanding democratic participation.
 
 ---
 
 ## 🧩 System Architecture
+
+```
+Frontend (React + Leaflet)
+↓
+REST API (FastAPI)
+↓
+PostgreSQL Database (Supabase)
+```
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone repo
+
+```bash
+git clone https://github.com/SafwanS143/Generational-Political-Turnout.git
+cd Generational-Political-Turnout
+```
+
+### 2. Backend Setup
+
+cd backend
+
+pip install -r requirements.txt
+
+uvicorn main:app --reload
+
+### 3. Frontend Setup
+
+cd frontend
+
+npm install
+
+npm run dev
+
+### 📈 Key Outcomes
+
+- Built a full-stack data platform with real-world datasets
+- Enabled interactive exploration of political turnout trends
+- Delivered insights into generational engagement patterns
+- Deployed a live application accessible to users
+
+### 🔮 Future Improvements
+
+- Add real-time data updates
+- Expand datasets to include more elections
+- Enhance analytics with predictive modeling
+- Improve performance and loading times
+
+### 👤 Author
+
+Safwan Shiblee
+University of Waterloo — Mechatronics Engineering
+
+- GitHub: https://github.com/SafwanS143
+- LinkedIn: https://linkedin.com/in/safwan-shiblee/
+
