@@ -43,9 +43,10 @@ export default function MapView() {
       });
   }, []);
 
-  // Get top 10 by votes
+  // Get top 10 by votes, deduplicating by name
   const top10 = [...institutions]
     .sort((a, b) => (b.votes || 0) - (a.votes || 0))
+    .filter((inst, idx, arr) => arr.findIndex(t => t.name === inst.name) === idx)
     .slice(0, 10);
 
   const customMarker = new L.Icon({
@@ -207,7 +208,7 @@ export default function MapView() {
                     icon={customMarker}
                     ref={top10Idx !== -1 ? (el => { top10MarkerRefs.current[top10Idx] = el; }) : undefined}
                   >
-                    <Popup>
+                    <Popup autoPan={false}>
                       <strong>{inst["name"]}</strong><br />
                       {inst.Province}<br />
                       Votes: {inst["votes"]}
